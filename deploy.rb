@@ -1,11 +1,22 @@
-server "53.201.216.144" , :web
-#server "ec2-52-201-216-144.compute-1.amazonaws.com"
+set :application, "app"
+set :repository,  "git@github.com:vaibhavttnd/capistrano.git"
+set :scm, :git
+set :deploy_to, "/var/www/html"
+set :user, "ubuntu"
+set :use_sudo, true
+set :keep_releases, 5
+role :app,"127.0.0.1"
 
-set :user,"ubuntu"
-
-task :remote, roles: :web do
-        run "#{sudo} touch vgscript.sql"
+namespace :deploy do
+ task :restart, :roles => :app  do
+          run "#{try_sudo} chmod 775 -R #{File.join(current_path,'myfolder','logs')}"
+          run "sudo service nginx reload"
+         end
+  end
+after "deploy:restart", "deploy:cleanup"
+task  :staging do 
+role :app,“127.0.0.1”
 end
-~                                                                                                                                              
-~                                                                                                                                              
-~             
+task  :production do 
+role :app,“127.0.0.1”
+end
